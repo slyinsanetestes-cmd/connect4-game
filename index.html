@@ -1,572 +1,228 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4 em Linha - Jogo de Apostas</title>
+    <title>4 em Linha</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* MANTER SEUS ESTILOS AQUI - ELES ESTÃO BONS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #334155;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --red: #ef4444;
-            --yellow: #fbbf24;
-            --green: #10b981;
-            --border: #475569;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        #app {
-            min-height: 100vh;
-            padding: 1rem;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-top: 1rem;
-        }
-
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 0.5rem;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .title {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), var(--green));
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .title { 
+            font-size: 32px; 
+            background: linear-gradient(45deg, #3b82f6, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin: 15px 0;
         }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+        .card {
+            background: #1e293b;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #334155;
         }
-
-        .balance-card {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
-            border: 2px solid var(--border);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .balance-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .balance-amount {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--green);
-        }
-
-        .menu-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .menu-btn {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 1rem;
-            padding: 1.2rem;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .btn {
+            display: block;
             width: 100%;
-            text-align: left;
-        }
-
-        .menu-btn:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
-
-        .menu-btn.primary {
-            background: linear-gradient(135deg, var(--accent), #2563eb);
-            border-color: var(--accent);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .menu-btn-icon {
-            font-size: 2rem;
-        }
-
-        .menu-btn-content {
-            flex: 1;
-        }
-
-        .menu-btn-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .menu-btn-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .back-btn {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            border-radius: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--text-primary);
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 1.5rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .room-card {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
-            border: 3px solid var(--border);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .room-name {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .room-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .info-item {
-            background: var(--bg-primary);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .info-label {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .info-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .room-actions {
-            margin-top: 1.5rem;
-        }
-
-        .room-btn {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .room-btn-join {
-            background: linear-gradient(135deg, var(--green), #059669);
+            padding: 15px;
+            margin: 10px 0;
+            background: #3b82f6;
             color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
-
-        .room-btn-join:hover {
-            transform: scale(1.05);
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #10b981);
+            font-size: 18px;
         }
-
+        .room {
+            padding: 15px;
+            background: #334155;
+            border-radius: 10px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .room:hover { background: #475569; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
         .spinner {
             width: 50px;
             height: 50px;
-            margin: 0 auto 1rem;
-            border: 4px solid var(--border);
-            border-top-color: var(--accent);
+            border: 5px solid #334155;
+            border-top: 5px solid #3b82f6;
             border-radius: 50%;
+            margin: 0 auto 20px;
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-        }
-
-        .nav-btn {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .user-info {
-            text-align: center;
-            margin-top: 1rem;
-            padding: 0.5rem;
-            background: var(--bg-secondary);
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div id="app"></div>
+    <div class="container" id="app">
+        <!-- Conteúdo carregado via JavaScript -->
+    </div>
 
     <script>
-        // ============ INICIALIZAÇÃO TELEGRAM ============
+        // Telegram Web App
         const tg = window.Telegram.WebApp;
-        
-        // Expande e inicializa
         tg.expand();
         tg.ready();
         
-        console.log("=== WEB APP INICIADO ===");
-        console.log("Plataforma:", tg.platform);
-        console.log("Versão:", tg.version);
-        console.log("User:", tg.initDataUnsafe?.user);
-        console.log("Start Param:", tg.initDataUnsafe?.start_param);
-
-        // ============ STATE ============
+        console.log("✅ Web App carregado");
+        console.log("👤 Usuário:", tg.initDataUnsafe?.user);
+        
+        // Estado do jogo
         const state = {
             screen: 'menu',
             user: tg.initDataUnsafe?.user || null,
-            balance: 100.00,
             rooms: [
-                { id: 'free', name: '🆓 Sala Gratuita', bet: 0, prize: 0 },
-                { id: '1', name: '💰 Sala R$ 1,00', bet: 1, prize: 1.80 },
-                { id: '2', name: '💵 Sala R$ 2,00', bet: 2, prize: 3.60 },
-                { id: '5', name: '💸 Sala R$ 5,00', bet: 5, prize: 9.00 },
-                { id: '10', name: '💎 Sala R$ 10,00', bet: 10, prize: 18.00 }
-            ],
-            currentRoom: 0,
-            isSearching: false
+                {id: 'free', name: '🆓 GRATUITA', bet: 0},
+                {id: '1', name: '💰 R$ 1,00', bet: 1},
+                {id: '2', name: '💵 R$ 2,00', bet: 2},
+                {id: '5', name: '💸 R$ 5,00', bet: 5},
+                {id: '10', name: '💎 R$ 10,00', bet: 10}
+            ]
         };
-
-        // ============ FUNÇÕES PRINCIPAIS ============
+        
+        // Renderiza a tela
         function render() {
             const app = document.getElementById('app');
             
-            switch(state.screen) {
-                case 'menu':
-                    app.innerHTML = renderMenu();
-                    break;
-                case 'rooms':
-                    app.innerHTML = renderRooms();
-                    break;
-                case 'waiting':
-                    app.innerHTML = renderWaiting();
-                    break;
-                default:
-                    app.innerHTML = renderMenu();
-            }
-        }
-
-        function renderMenu() {
-            return `
-                <div class="header">
-                    <div class="logo">🎮</div>
-                    <h1 class="title">4 EM LINHA</h1>
-                    <p class="subtitle">Conecte 4 peças e ganhe!</p>
-                </div>
-
-                <div class="balance-card">
-                    <div class="balance-label">💰 SEU SALDO</div>
-                    <div class="balance-amount">R$ ${state.balance.toFixed(2)}</div>
-                    <button onclick="updateBalance()" style="
-                        margin-top: 15px;
-                        background: var(--accent);
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 10px;
-                        font-weight: bold;
-                        cursor: pointer;
-                        width: 100%;
-                    ">
-                        🔄 ATUALIZAR SALDO
-                    </button>
-                </div>
-
-                <div class="menu-buttons">
-                    <button class="menu-btn primary" onclick="showRooms()">
-                        <span class="menu-btn-icon">🎮</span>
-                        <div class="menu-btn-content">
-                            <div class="menu-btn-title">JOGAR AGORA</div>
-                            <div class="menu-btn-subtitle">Escolha uma sala para jogar</div>
-                        </div>
-                    </button>
-
-                    <button class="menu-btn" onclick="showProfile()">
-                        <span class="menu-btn-icon">📊</span>
-                        <div class="menu-btn-content">
-                            <div class="menu-btn-title">MEU PERFIL</div>
-                            <div class="menu-btn-subtitle">Ver estatísticas e XP</div>
-                        </div>
-                    </button>
-
-                    <button class="menu-btn" onclick="showRanking()">
-                        <span class="menu-btn-icon">🏆</span>
-                        <div class="menu-btn-content">
-                            <div class="menu-btn-title">RANKING TOP 10</div>
-                            <div class="menu-btn-subtitle">Melhores jogadores</div>
-                        </div>
-                    </button>
-
-                    <button class="menu-btn" onclick="showDeposit()">
-                        <span class="menu-btn-icon">💳</span>
-                        <div class="menu-btn-content">
-                            <div class="menu-btn-title">DEPOSITAR</div>
-                            <div class="menu-btn-subtitle">Adicionar saldo</div>
-                        </div>
-                    </button>
-
-                    <button class="menu-btn" onclick="showWithdraw()">
-                        <span class="menu-btn-icon">💸</span>
-                        <div class="menu-btn-content">
-                            <div class="menu-btn-title">SACAR</div>
-                            <div class="menu-btn-subtitle">Retirar ganhos</div>
-                        </div>
-                    </button>
-                </div>
-
-                ${state.user ? `
-                    <div class="user-info">
-                        👤 ID: ${state.user.id} | ${state.user.first_name || 'Jogador'}
+            if (state.screen === 'menu') {
+                app.innerHTML = `
+                    <div class="header">
+                        <h1 class="title">4 EM LINHA</h1>
+                        <p>Conecte 4 peças e ganhe!</p>
                     </div>
-                ` : ''}
-            `;
-        }
-
-        function renderRooms() {
-            const room = state.rooms[state.currentRoom];
-            
-            return `
-                <button class="back-btn" onclick="goToMenu()">
-                    ← Voltar ao Menu
-                </button>
-
-                <div class="room-card">
-                    <div class="room-name">${room.name}</div>
                     
-                    <div class="room-info">
-                        <div class="info-item">
-                            <div class="info-label">💵 APOSTA</div>
-                            <div class="info-value">R$ ${room.bet.toFixed(2)}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">🏆 PRÊMIO</div>
-                            <div class="info-value">R$ ${room.prize.toFixed(2)}</div>
-                        </div>
-                    </div>
-
-                    <div class="room-actions">
-                        <button class="room-btn room-btn-join" onclick="joinRoom('${room.id}')">
-                            🎮 ENTRAR NA SALA
+                    <div class="card">
+                        <p style="text-align: center; color: #94a3b8;">Seu Saldo</p>
+                        <h2 style="text-align: center; color: #10b981; margin: 10px 0;">R$ 100.00</h2>
+                        <button class="btn" onclick="sendAction('balance')">
+                            🔄 Atualizar Saldo
                         </button>
                     </div>
-                </div>
-
-                <div class="nav-buttons">
-                    <button class="nav-btn" onclick="changeRoom(${state.currentRoom - 1})" ${state.currentRoom === 0 ? 'disabled' : ''}>
-                        ← Anterior
-                    </button>
-                    <div style="color: var(--text-secondary); padding: 0.75rem;">
-                        ${state.currentRoom + 1} / ${state.rooms.length}
-                    </div>
-                    <button class="nav-btn" onclick="changeRoom(${state.currentRoom + 1})" ${state.currentRoom === state.rooms.length - 1 ? 'disabled' : ''}>
-                        Próxima →
-                    </button>
-                </div>
-
-                <div style="text-align: center; margin-top: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
-                    💡 Dica: Salas com valor maior têm prêmios maiores!
-                </div>
-            `;
-        }
-
-        function renderWaiting() {
-            return `
-                <div style="text-align: center; padding: 3rem 1rem;">
-                    <div class="spinner"></div>
-                    <h2 style="margin: 1.5rem 0;">🔍 PROCURANDO OPONENTE...</h2>
-                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
-                        Aguarde enquanto encontramos um adversário para você.
-                        Isso pode levar alguns segundos.
-                    </p>
                     
-                    <button onclick="cancelSearch()" style="
-                        background: var(--red);
-                        color: white;
-                        border: none;
-                        padding: 1rem 2rem;
-                        border-radius: 0.75rem;
-                        font-weight: bold;
-                        font-size: 1.1rem;
-                        cursor: pointer;
-                        width: 100%;
-                        max-width: 300px;
-                    ">
-                        ❌ CANCELAR BUSCA
+                    <button class="btn btn-primary" onclick="showRooms()">
+                        🎮 JOGAR AGORA
                     </button>
                     
-                    <div style="margin-top: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
-                        ⌛ Tempo estimado: 10-30 segundos
+                    <button class="btn" onclick="sendAction('profile')">
+                        📊 Meu Perfil
+                    </button>
+                    
+                    <button class="btn" onclick="sendAction('ranking')">
+                        🏆 Ranking
+                    </button>
+                    
+                    <button class="btn" onclick="sendAction('deposit')">
+                        💳 Depositar
+                    </button>
+                    
+                    <button class="btn" onclick="sendAction('withdraw')">
+                        💸 Sacar
+                    </button>
+                    
+                    ${state.user ? `
+                        <div style="text-align: center; margin-top: 20px; color: #94a3b8;">
+                            👤 ${state.user.first_name} | ID: ${state.user.id}
+                        </div>
+                    ` : ''}
+                `;
+            }
+            else if (state.screen === 'rooms') {
+                app.innerHTML = `
+                    <button class="btn" onclick="goToMenu()" style="margin-bottom: 20px;">
+                        ← Voltar
+                    </button>
+                    
+                    <div class="card">
+                        <h3 style="text-align: center;">Escolha uma Sala</h3>
+                        
+                        ${state.rooms.map(room => `
+                            <div class="room" onclick="joinRoom('${room.id}')">
+                                <div style="font-size: 18px; font-weight: bold;">${room.name}</div>
+                                <div style="color: #94a3b8; margin-top: 5px;">
+                                    Aposta: R$ ${room.bet.toFixed(2)} | Prêmio: R$ ${(room.bet * 1.8).toFixed(2)}
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
-                </div>
-            `;
+                `;
+            }
+            else if (state.screen === 'waiting') {
+                app.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <h3>🔍 Buscando Oponente...</h3>
+                        <p>Aguarde enquanto encontramos alguém para jogar com você</p>
+                        <button class="btn" onclick="cancelSearch()" style="background: #ef4444; margin-top: 20px;">
+                            ❌ Cancelar Busca
+                        </button>
+                    </div>
+                `;
+            }
         }
-
-        // ============ AÇÕES ============
+        
+        // Funções de navegação
         function showRooms() {
             state.screen = 'rooms';
             render();
         }
-
+        
         function goToMenu() {
             state.screen = 'menu';
             render();
         }
-
-        function changeRoom(index) {
-            if (index >= 0 && index < state.rooms.length) {
-                state.currentRoom = index;
-                render();
-            }
-        }
-
+        
         function joinRoom(roomId) {
             console.log("Entrando na sala:", roomId);
             
             // Envia para o bot
-            sendToBot('join_room', { room_id: roomId });
+            sendAction('join_room', { room_id: roomId });
             
             // Muda para tela de espera
             state.screen = 'waiting';
-            state.isSearching = true;
             render();
             
-            // Feedback
             tg.showAlert(`Buscando oponente na sala ${roomId}...`);
             
-            // Timeout de 30 segundos
+            // Timeout após 30 segundos
             setTimeout(() => {
-                if (state.isSearching) {
-                    state.isSearching = false;
+                if (state.screen === 'waiting') {
                     state.screen = 'menu';
                     render();
-                    tg.showAlert("❌ Não encontramos oponentes. Tente novamente!");
+                    tg.showAlert("Não encontramos oponentes. Tente novamente!");
                 }
             }, 30000);
         }
-
+        
         function cancelSearch() {
-            if (state.isSearching) {
-                sendToBot('cancel_search');
-                state.isSearching = false;
-                state.screen = 'menu';
-                render();
-                tg.showAlert("Busca cancelada!");
-            }
+            sendAction('cancel_search');
+            state.screen = 'menu';
+            render();
+            tg.showAlert("Busca cancelada!");
         }
-
-        function updateBalance() {
-            sendToBot('balance');
-            tg.showAlert("Solicitando atualização de saldo...");
-        }
-
-        function showProfile() {
-            sendToBot('profile');
-            tg.showAlert("Carregando perfil...");
-        }
-
-        function showRanking() {
-            sendToBot('ranking');
-            tg.showAlert("Carregando ranking...");
-        }
-
-        function showDeposit() {
-            sendToBot('deposit');
-            tg.showAlert("Abrindo depósito...");
-        }
-
-        function showWithdraw() {
-            sendToBot('withdraw');
-            tg.showAlert("Abrindo saque...");
-        }
-
-        // ============ COMUNICAÇÃO COM BOT ============
-        function sendToBot(action, data = {}) {
-            console.log("📤 Enviando para bot:", action, data);
+        
+        // Comunicação com o bot
+        function sendAction(action, data = {}) {
+            console.log("Enviando:", action, data);
             
             const message = {
                 action: action,
@@ -576,36 +232,23 @@
                 ...data
             };
             
-            // DEBUG no console
-            console.log("Mensagem completa:", message);
-            
-            // Envia para o bot
             try {
                 tg.sendData(JSON.stringify(message));
-                console.log("✅ Dados enviados com sucesso!");
+                console.log("✅ Dados enviados ao bot");
             } catch (error) {
-                console.error("❌ Erro ao enviar dados:", error);
-                tg.showAlert("Erro ao enviar dados. Tente novamente.");
+                console.error("❌ Erro:", error);
+                tg.showAlert("Erro ao enviar. Tente novamente.");
             }
         }
-
-        // ============ EVENTOS TELEGRAM ============
-        tg.onEvent('themeChanged', () => {
-            console.log("Tema alterado");
-        });
-
-        tg.onEvent('viewportChanged', (e) => {
-            console.log("Viewport alterado:", e);
-        });
-
-        // ============ INICIALIZAÇÃO ============
-        console.log("✅ Renderizando interface...");
-        render();
         
-        // Feedback inicial
-        setTimeout(() => {
-            tg.showAlert("Bem-vindo ao 4 em Linha! 🎮");
-        }, 500);
+        // Inicializa
+        render();
+        tg.showAlert("Bem-vindo ao 4 em Linha! 🎮");
+        
+        // Event listeners
+        tg.onEvent('viewportChanged', () => {
+            console.log("Tamanho da tela alterado");
+        });
     </script>
 </body>
 </html>
