@@ -1,370 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>4 em Linha</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #0f172a; 
-            color: white; 
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            min-height: 100vh;
-        }
+        body { background: #0f172a; color: white; font-family: Arial; padding: 20px; }
         .container { max-width: 500px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; padding-top: 20px; }
-        .title { 
-            font-size: 32px; 
-            background: linear-gradient(45deg, #3b82f6, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 10px 0;
-        }
-        .card {
-            background: #1e293b;
-            border-radius: 20px;
-            padding: 25px;
-            margin: 20px 0;
-            border: 2px solid #334155;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .balance {
-            text-align: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: #10b981;
-            margin: 15px 0;
-            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            margin: 12px 0;
-            border: none;
-            border-radius: 15px;
-            background: #3b82f6;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #2563eb;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #3b82f6, #10b981);
-            font-size: 20px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .room {
-            padding: 20px;
-            background: #334155;
-            border-radius: 15px;
-            margin: 15px 0;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        .room:hover {
-            background: #475569;
-            transform: translateX(10px);
-            border-color: #3b82f6;
-        }
-        .room-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .room-info {
-            display: flex;
-            justify-content: space-between;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-        }
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #334155;
-            border-top: 5px solid #3b82f6;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .back-btn {
-            background: #475569;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .user-info {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: #1e293b;
-            border-radius: 15px;
-            color: #94a3b8;
-            font-size: 12px;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .title { font-size: 32px; color: #3b82f6; margin: 10px 0; }
+        .card { background: #1e293b; padding: 20px; border-radius: 15px; margin: 15px 0; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; 
+               background: #3b82f6; color: white; border: none; border-radius: 10px; 
+               font-size: 16px; cursor: pointer; }
+        .btn-primary { background: linear-gradient(45deg, #3b82f6, #10b981); font-size: 18px; }
+        .loading { text-align: center; padding: 40px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #334155; 
+                   border-top: 5px solid #3b82f6; border-radius: 50%; 
+                   margin: 0 auto 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="container" id="app">
-        <!-- Conteúdo carregado aqui -->
+        <div class="header">
+            <h1 class="title">4 EM LINHA</h1>
+            <p>Interface Gráfica Beta</p>
+        </div>
+        
+        <div class="card">
+            <h3>🎮 COMO JOGAR:</h3>
+            <p>1. Volte para o chat do bot</p>
+            <p>2. Use /start para abrir o menu</p>
+            <p>3. Clique em "🔍 Buscar Partida"</p>
+            <p>4. Aguarde oponente</p>
+            <p>5. Quando encontrar, receberá notificação!</p>
+        </div>
+        
+        <button class="btn btn-primary" onclick="openBot()">
+            🔙 Voltar para o Bot
+        </button>
+        
+        <div class="card" style="margin-top: 20px; font-size: 12px; color: #94a3b8;">
+            <p>💡 <strong>Dica:</strong> Abra o bot em DUAS contas diferentes e clique em "Buscar Partida" nas duas ao mesmo tempo!</p>
+        </div>
     </div>
 
     <script>
-        // ============ INICIALIZAÇÃO ============
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
         
-        console.log('Web App iniciado. User:', tg.initDataUnsafe?.user);
+        console.log('Web App carregado. User:', tg.initDataUnsafe?.user);
         
-        // Pega parâmetros da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const action = urlParams.get('action');
-        const room = urlParams.get('room');
-        const userId = urlParams.get('user_id');
-        
-        console.log('Parâmetros URL:', { action, room, userId });
-        
-        // Estado
-        const state = {
-            screen: action === 'play' ? 'rooms' : 'menu',
-            user: tg.initDataUnsafe?.user || { id: userId, first_name: 'Jogador' },
-            balance: 100.00,
-            rooms: [
-                { id: 'free', name: '🆓 SALA GRATUITA', bet: 0 },
-                { id: '1', name: '💰 SALA R$ 1,00', bet: 1 },
-                { id: '2', name: '💵 SALA R$ 2,00', bet: 2 },
-                { id: '5', name: '💸 SALA R$ 5,00', bet: 5 },
-                { id: '10', name: '💎 SALA R$ 10,00', bet: 10 }
-            ],
-            selectedRoom: room || 'free',
-            isSearching: false
-        };
-        
-        // ============ RENDERIZAÇÃO ============
-        function render() {
-            const app = document.getElementById('app');
-            
-            if (state.screen === 'menu') {
-                app.innerHTML = `
-                    <div class="header">
-                        <h1 class="title">4 EM LINHA</h1>
-                        <p>Conecte 4 peças e ganhe!</p>
-                    </div>
-                    
-                    <div class="card">
-                        <div style="color: #94a3b8; text-align: center;">Seu Saldo</div>
-                        <div class="balance">R$ ${state.balance.toFixed(2)}</div>
-                        <button class="btn" onclick="sendToBot('balance')">
-                            🔄 Atualizar Saldo
-                        </button>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="showRooms()">
-                        🎮 JOGAR AGORA
-                    </button>
-                    
-                    <button class="btn" onclick="sendToBot('profile')">
-                        📊 Meu Perfil
-                    </button>
-                    
-                    <button class="btn" onclick="sendToBot('ranking')">
-                        🏆 Ranking
-                    </button>
-                    
-                    <button class="btn" onclick="sendToBot('deposit')">
-                        💳 Depositar
-                    </button>
-                    
-                    <button class="btn" onclick="sendToBot('withdraw')">
-                        💸 Sacar
-                    </button>
-                    
-                    ${renderUserInfo()}
-                `;
-            }
-            else if (state.screen === 'rooms') {
-                app.innerHTML = `
-                    <button class="back-btn" onclick="goToMenu()">← Voltar</button>
-                    
-                    <div class="card">
-                        <h3 style="text-align: center; margin-bottom: 20px; color: #3b82f6;">
-                            🎯 ESCOLHA UMA SALA
-                        </h3>
-                        
-                        ${state.rooms.map(r => `
-                            <div class="room" onclick="selectRoom('${r.id}')" 
-                                 style="${state.selectedRoom === r.id ? 'border-color: #10b981; background: rgba(16, 185, 129, 0.1);' : ''}">
-                                <div class="room-name">${r.name}</div>
-                                <div class="room-info">
-                                    <span>💵 Aposta: R$ ${r.bet.toFixed(2)}</span>
-                                    <span>🏆 Prêmio: R$ ${(r.bet * 1.8).toFixed(2)}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                        
-                        <button class="btn btn-primary" onclick="joinRoom()" style="margin-top: 20px;">
-                            🎮 ENTRAR NA SALA
-                        </button>
-                    </div>
-                `;
-            }
-            else if (state.screen === 'waiting') {
-                app.innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <h2>🔍 BUSCANDO OPONENTE...</h2>
-                        <p style="color: #94a3b8; margin: 20px 0;">
-                            Aguarde enquanto encontramos um adversário.<br>
-                            Isso pode levar alguns segundos.
-                        </p>
-                        
-                        <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px solid #3b82f6;">
-                            <div style="color: #3b82f6; font-weight: bold;">⏰ Tempo estimado: 10-30 segundos</div>
-                            <div style="color: #94a3b8; font-size: 12px; margin-top: 5px;">
-                                Se demorar muito, tente outra sala
-                            </div>
-                        </div>
-                        
-                        <button class="btn" onclick="cancelSearch()" style="background: #ef4444;">
-                            ❌ Cancelar Busca
-                        </button>
-                    </div>
-                `;
-            }
+        function openBot() {
+            // Abre o bot no Telegram
+            window.location.href = 'https://t.me/Apostajogosbot';
         }
         
-        function renderUserInfo() {
-            if (!state.user) return '';
-            return `
-                <div class="user-info">
-                    👤 ${state.user.first_name} | 🆔 ${state.user.id}
-                </div>
-            `;
-        }
-        
-        // ============ FUNÇÕES ============
-        function showRooms() {
-            state.screen = 'rooms';
-            render();
-        }
-        
-        function goToMenu() {
-            state.screen = 'menu';
-            render();
-        }
-        
-        function selectRoom(roomId) {
-            state.selectedRoom = roomId;
-            render();
-        }
-        
-        function joinRoom() {
-            console.log('Entrando na sala:', state.selectedRoom);
-            
-            // Envia para o bot
-            sendToBot('join_room', { 
-                room_id: state.selectedRoom,
-                user_id: state.user.id,
-                username: state.user.first_name
-            });
-            
-            // Muda para tela de espera
-            state.screen = 'waiting';
-            state.isSearching = true;
-            render();
-            
-            tg.showAlert(`Buscando oponente na sala ${state.selectedRoom}...`);
-            
-            // Timeout após 30 segundos
-            setTimeout(() => {
-                if (state.isSearching) {
-                    state.isSearching = false;
-                    state.screen = 'menu';
-                    render();
-                    tg.showAlert('⏰ Não encontramos oponentes. Tente novamente!');
-                }
-            }, 30000);
-        }
-        
-        function cancelSearch() {
-            if (state.isSearching) {
-                sendToBot('cancel_search', {});
-                state.isSearching = false;
-                state.screen = 'menu';
-                render();
-                tg.showAlert('Busca cancelada!');
-            }
-        }
-        
-        // ============ COMUNICAÇÃO COM BOT ============
-        function sendToBot(action, data = {}) {
-            console.log('Enviando para bot:', action, data);
-            
-            // Método 1: Envia comando especial via mensagem
-            const payload = {
-                action: action,
-                user_id: state.user?.id,
-                username: state.user?.first_name || 'Jogador',
-                timestamp: Date.now(),
-                ...data
-            };
-            
-            // Codifica os dados para URL
-            const encodedData = encodeURIComponent(JSON.stringify(payload));
-            
-            // Cria uma URL especial que o bot vai processar
-            const botCommand = `/webapp_${action}_${encodedData}`;
-            
-            // Abre o chat com o bot (funciona em todos dispositivos)
-            window.location.href = `https://t.me/Apostajogosbot?start=${encodedData}`;
-            
-            // Método alternativo: Tenta usar sendData
-            try {
-                tg.sendData(JSON.stringify(payload));
-                console.log('✅ sendData executado');
-            } catch (error) {
-                console.log('ℹ️ sendData não disponível, usando método alternativo');
-            }
-            
-            tg.showAlert(`Enviando: ${action}...`);
-        }
-        
-        // ============ INICIALIZAÇÃO ============
-        render();
-        
-        // Se veio com parâmetros de sala, entra automaticamente
-        if (action === 'play' && room) {
-            setTimeout(() => {
-                joinRoom();
-            }, 1000);
-        }
+        // Mostra mensagem
+        tg.showAlert('🎮 Bem-vindo à interface gráfica!\n\nVolte ao bot para buscar partidas.');
     </script>
 </body>
 </html>
