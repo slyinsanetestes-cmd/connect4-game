@@ -12,8 +12,13 @@
             color: white; 
             font-family: Arial, sans-serif;
             padding: 20px;
+            min-height: 100vh;
         }
-        .container { max-width: 500px; margin: 0 auto; }
+        .container { 
+            max-width: 500px; 
+            margin: 0 auto;
+            padding-bottom: 20px;
+        }
         .header { text-align: center; margin-bottom: 30px; }
         .title { 
             font-size: 32px; 
@@ -41,6 +46,11 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
         }
         .btn-primary {
             background: linear-gradient(45deg, #3b82f6, #10b981);
@@ -52,8 +62,12 @@
             border-radius: 10px;
             margin: 10px 0;
             cursor: pointer;
+            transition: all 0.3s;
         }
-        .room:hover { background: #475569; }
+        .room:hover { 
+            background: #475569;
+            transform: translateX(5px);
+        }
         .loading {
             text-align: center;
             padding: 40px;
@@ -71,42 +85,78 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .debug {
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
-        <!-- Conteúdo carregado via JavaScript -->
+    <div class="container">
+        <div id="app">
+            <!-- Conteúdo carregado aqui -->
+        </div>
+        
+        <div class="debug" id="debug">
+            <!-- Logs de debug -->
+        </div>
     </div>
 
     <script>
-        // Telegram Web App
+        // ============ INICIALIZAÇÃO ============
         const tg = window.Telegram.WebApp;
+        
+        // Expandir e inicializar
         tg.expand();
         tg.ready();
         
-        console.log("✅ Web App carregado");
-        console.log("👤 Usuário:", tg.initDataUnsafe?.user);
+        console.log("=== WEB APP INICIADO ===");
+        console.log("Plataforma:", tg.platform);
+        console.log("Versão:", tg.version);
+        console.log("User:", tg.initDataUnsafe?.user);
         
-        // Estado do jogo
+        // Função para logs visuais
+        function logDebug(msg) {
+            console.log(msg);
+            const debugDiv = document.getElementById('debug');
+            if (debugDiv) {
+                debugDiv.innerHTML += msg + '<br>';
+                debugDiv.scrollTop = debugDiv.scrollHeight;
+            }
+        }
+        
+        logDebug("✅ Web App carregado");
+        logDebug(`👤 Usuário: ${tg.initDataUnsafe?.user?.first_name || 'Anônimo'}`);
+        
+        // ============ ESTADO ============
         const state = {
             screen: 'menu',
             user: tg.initDataUnsafe?.user || null,
             rooms: [
-                {id: 'free', name: '🆓 GRATUITA', bet: 0},
-                {id: '1', name: '💰 R$ 1,00', bet: 1},
-                {id: '2', name: '💵 R$ 2,00', bet: 2},
-                {id: '5', name: '💸 R$ 5,00', bet: 5},
-                {id: '10', name: '💎 R$ 10,00', bet: 10}
-            ]
+                {id: 'free', name: '🆓 GRATUITA', bet: 0, color: '#94a3b8'},
+                {id: '1', name: '💰 R$ 1,00', bet: 1, color: '#10b981'},
+                {id: '2', name: '💵 R$ 2,00', bet: 2, color: '#fbbf24'},
+                {id: '5', name: '💸 R$ 5,00', bet: 5, color: '#f97316'},
+                {id: '10', name: '💎 R$ 10,00', bet: 10, color: '#8b5cf6'}
+            ],
+            searching: false
         };
         
-        // Renderiza a tela
+        // ============ RENDERIZAÇÃO ============
         function render() {
             const app = document.getElementById('app');
             
             if (state.screen === 'menu') {
                 app.innerHTML = `
                     <div class="header">
+                        <div style="font-size: 48px; margin-bottom: 10px;">🎮</div>
                         <h1 class="title">4 EM LINHA</h1>
                         <p>Conecte 4 peças e ganhe!</p>
                     </div>
@@ -140,8 +190,9 @@
                     </button>
                     
                     ${state.user ? `
-                        <div style="text-align: center; margin-top: 20px; color: #94a3b8;">
-                            👤 ${state.user.first_name} | ID: ${state.user.id}
+                        <div style="text-align: center; margin-top: 20px; color: #94a3b8; padding: 10px; background: #1e293b; border-radius: 10px;">
+                            👤 <strong>${state.user.first_name}</strong><br>
+                            🆔 ID: ${state.user.id}
                         </div>
                     ` : ''}
                 `;
@@ -149,20 +200,26 @@
             else if (state.screen === 'rooms') {
                 app.innerHTML = `
                     <button class="btn" onclick="goToMenu()" style="margin-bottom: 20px;">
-                        ← Voltar
+                        ← Voltar ao Menu
                     </button>
                     
                     <div class="card">
-                        <h3 style="text-align: center;">Escolha uma Sala</h3>
+                        <h3 style="text-align: center; margin-bottom: 20px;">🎯 Escolha uma Sala</h3>
                         
                         ${state.rooms.map(room => `
-                            <div class="room" onclick="joinRoom('${room.id}')">
+                            <div class="room" onclick="joinRoom('${room.id}')" 
+                                 style="border-left: 5px solid ${room.color};">
                                 <div style="font-size: 18px; font-weight: bold;">${room.name}</div>
-                                <div style="color: #94a3b8; margin-top: 5px;">
-                                    Aposta: R$ ${room.bet.toFixed(2)} | Prêmio: R$ ${(room.bet * 1.8).toFixed(2)}
+                                <div style="color: #94a3b8; margin-top: 5px; font-size: 14px;">
+                                    💵 Aposta: R$ ${room.bet.toFixed(2)}<br>
+                                    🏆 Prêmio: R$ ${(room.bet * 1.8).toFixed(2)}
                                 </div>
                             </div>
                         `).join('')}
+                        
+                        <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 14px;">
+                            💡 Dica: Comece pela sala gratuita!
+                        </div>
                     </div>
                 `;
             }
@@ -171,8 +228,20 @@
                     <div class="loading">
                         <div class="spinner"></div>
                         <h3>🔍 Buscando Oponente...</h3>
-                        <p>Aguarde enquanto encontramos alguém para jogar com você</p>
-                        <button class="btn" onclick="cancelSearch()" style="background: #ef4444; margin-top: 20px;">
+                        <p style="color: #94a3b8; margin: 10px 0;">
+                            Aguarde enquanto encontramos alguém para jogar com você.
+                            Isso pode levar alguns segundos.
+                        </p>
+                        
+                        <div style="background: #1e293b; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                            <div style="color: #fbbf24;">⏰ Tempo estimado: 10-30 segundos</div>
+                            <div style="color: #94a3b8; font-size: 12px; margin-top: 5px;">
+                                Se demorar muito, tente outra sala
+                            </div>
+                        </div>
+                        
+                        <button class="btn" onclick="cancelSearch()" 
+                                style="background: linear-gradient(45deg, #ef4444, #dc2626);">
                             ❌ Cancelar Busca
                         </button>
                     </div>
@@ -180,50 +249,53 @@
             }
         }
         
-        // Funções de navegação
+        // ============ FUNÇÕES ============
         function showRooms() {
+            logDebug("Mostrando salas...");
             state.screen = 'rooms';
             render();
         }
         
         function goToMenu() {
+            logDebug("Voltando ao menu...");
             state.screen = 'menu';
             render();
         }
         
         function joinRoom(roomId) {
-            console.log("Entrando na sala:", roomId);
+            logDebug(`Tentando entrar na sala: ${roomId}`);
             
             // Envia para o bot
             sendAction('join_room', { room_id: roomId });
             
             // Muda para tela de espera
             state.screen = 'waiting';
+            state.searching = true;
             render();
-            
-            tg.showAlert(`Buscando oponente na sala ${roomId}...`);
             
             // Timeout após 30 segundos
             setTimeout(() => {
-                if (state.screen === 'waiting') {
+                if (state.searching) {
+                    logDebug("⏰ Timeout - Nenhum oponente encontrado");
+                    state.searching = false;
                     state.screen = 'menu';
                     render();
-                    tg.showAlert("Não encontramos oponentes. Tente novamente!");
+                    tg.showAlert("⏰ Não encontramos oponentes. Tente novamente!");
                 }
             }, 30000);
         }
         
         function cancelSearch() {
+            logDebug("Cancelando busca...");
             sendAction('cancel_search');
+            state.searching = false;
             state.screen = 'menu';
             render();
-            tg.showAlert("Busca cancelada!");
+            tg.showAlert("✅ Busca cancelada!");
         }
         
-        // Comunicação com o bot
+        // ============ COMUNICAÇÃO COM BOT ============
         function sendAction(action, data = {}) {
-            console.log("Enviando:", action, data);
-            
             const message = {
                 action: action,
                 user_id: state.user?.id,
@@ -232,23 +304,45 @@
                 ...data
             };
             
+            logDebug(`📤 Enviando: ${action} ${JSON.stringify(data)}`);
+            
             try {
+                // DEBUG: Mostra o que está sendo enviado
+                console.log("Mensagem para o bot:", message);
+                
+                // Envia para o bot
                 tg.sendData(JSON.stringify(message));
-                console.log("✅ Dados enviados ao bot");
+                logDebug("✅ Dados enviados com sucesso!");
+                
+                // Feedback visual
+                tg.showAlert(`Enviado: ${action}`);
+                
             } catch (error) {
-                console.error("❌ Erro:", error);
-                tg.showAlert("Erro ao enviar. Tente novamente.");
+                logDebug(`❌ Erro ao enviar: ${error}`);
+                tg.showAlert("❌ Erro ao enviar dados. Tente novamente.");
             }
         }
         
-        // Inicializa
-        render();
-        tg.showAlert("Bem-vindo ao 4 em Linha! 🎮");
-        
-        // Event listeners
-        tg.onEvent('viewportChanged', () => {
-            console.log("Tamanho da tela alterado");
+        // ============ EVENTOS ============
+        tg.onEvent('themeChanged', () => {
+            logDebug("🎨 Tema alterado");
         });
+        
+        tg.onEvent('viewportChanged', (e) => {
+            logDebug(`📱 Viewport: ${e.width}x${e.height}`);
+        });
+        
+        // ============ INICIALIZAÇÃO ============
+        logDebug("🎬 Inicializando interface...");
+        render();
+        
+        // Mostra mensagem de boas-vindas
+        setTimeout(() => {
+            tg.showAlert("🎮 Bem-vindo ao 4 em Linha!\nClique em JOGAR AGORA para começar!");
+        }, 500);
+        
+        // Log adicional
+        logDebug("✅ Interface carregada com sucesso!");
     </script>
 </body>
 </html>
