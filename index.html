@@ -1,149 +1,677 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Teste Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 em Linha - Interface Gráfica</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            background: #000; 
-            color: #0f0; 
-            font-family: monospace; 
+        /* ESTILOS PROFISSIONAIS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
             padding: 20px;
+            background: linear-gradient(135deg, var(--darker) 0%, #1e293b 100%);
         }
-        button { 
-            background: #0f0; 
-            color: #000; 
-            border: none; 
-            padding: 15px; 
-            margin: 10px; 
-            font-size: 16px; 
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .balance-display {
+            text-align: center;
+        }
+        
+        .balance-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--secondary);
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
-        .log { 
-            background: #111; 
-            padding: 10px; 
-            margin: 10px 0; 
-            border: 1px solid #0f0;
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: white;
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rooms-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .room-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .room-card:hover {
+            transform: translateX(10px);
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .room-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .room-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            margin: 15px 0;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Modal de confirmação */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .debug-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #0f0;
+            max-height: 100px;
+            overflow-y: auto;
+            display: none; /* Oculta em produção */
         }
     </style>
 </head>
 <body>
-    <h1>🧪 TESTE WEB APP</h1>
-    
-    <div id="status">Carregando...</div>
-    
-    <div>
-        <button onclick="testSend('join_room', {room_id: 'free'})">
-            🎮 ENVIAR join_room
-        </button>
-        
-        <button onclick="testSend('profile', {})">
-            📊 ENVIAR profile
-        </button>
-        
-        <button onclick="testSend('test', {hello: 'world'})">
-            🧪 ENVIAR teste
-        </button>
-    </div>
-    
-    <div class="log" id="log">
-        <!-- Logs aparecerão aqui -->
+    <div class="container" id="app">
+        <!-- Interface carregada aqui -->
     </div>
 
     <script>
-        // Telegram Web App
+        // ============ INICIALIZAÇÃO ============
         const tg = window.Telegram.WebApp;
         
-        // Expande e inicializa
+        // Configuração inicial
         tg.expand();
         tg.ready();
+        tg.setHeaderColor('#0f172a');
+        tg.setBackgroundColor('#020617');
         
-        // Elementos DOM
-        const statusEl = document.getElementById('status');
-        const logEl = document.getElementById('log');
+        console.log('=== WEB APP INICIADO ===');
+        console.log('User:', tg.initDataUnsafe?.user);
+        console.log('Platform:', tg.platform);
         
-        // Função de log
-        function log(msg) {
-            console.log(msg);
-            logEl.innerHTML += msg + '<br>';
-            logEl.scrollTop = logEl.scrollHeight;
-        }
+        // Estado da aplicação
+        const state = {
+            screen: 'menu',
+            user: tg.initDataUnsafe?.user || null,
+            balance: 100.00,
+            rooms: [
+                { id: 'free', name: '🆓 Sala Gratuita', bet: 0, icon: '🎮', color: '#94a3b8' },
+                { id: '1', name: '💰 Sala R$ 1,00', bet: 1, icon: '💎', color: '#10b981' },
+                { id: '2', name: '💵 Sala R$ 2,00', bet: 2, icon: '💰', color: '#fbbf24' },
+                { id: '5', name: '💸 Sala R$ 5,00', bet: 5, icon: '💸', color: '#f97316' },
+                { id: '10', name: '💎 Sala R$ 10,00', bet: 10, icon: '👑', color: '#8b5cf6' }
+            ],
+            isSearching: false
+        };
         
-        // Inicialização
-        log("=== WEB APP INICIADO ===");
-        log(`Plataforma: ${tg.platform}`);
-        log(`Versão: ${tg.version}`);
-        log(`User ID: ${tg.initDataUnsafe?.user?.id || 'N/A'}`);
-        log(`User: ${tg.initDataUnsafe?.user?.first_name || 'N/A'}`);
-        
-        statusEl.innerHTML = `👤 ${tg.initDataUnsafe?.user?.first_name || 'Usuário'} | ID: ${tg.initDataUnsafe?.user?.id || 'N/A'}`;
-        
-        // Função para enviar dados
-        function testSend(action, data) {
-            const payload = {
-                action: action,
-                user_id: tg.initDataUnsafe?.user?.id,
-                username: tg.initDataUnsafe?.user?.first_name || "Teste",
-                timestamp: Date.now(),
-                ...data
-            };
+        // ============ RENDERIZAÇÃO ============
+        function render() {
+            const app = document.getElementById('app');
             
-            log(`📤 Enviando: ${JSON.stringify(payload)}`);
-            
-            try {
-                // Método 1: sendData padrão
-                tg.sendData(JSON.stringify(payload));
-                log("✅ sendData() chamado");
-                
-                // Método 2: Feedback
-                tg.showAlert(`Enviado: ${action}`);
-                
-                // Método 3: Tentar enviar como callback
-                setTimeout(() => {
-                    try {
-                        if (window.TelegramGameProxy && window.TelegramGameProxy.receiveEvent) {
-                            window.TelegramGameProxy.receiveEvent("custom", JSON.stringify(payload));
-                            log("✅ TelegramGameProxy usado");
-                        }
-                    } catch (e) {
-                        log(`❌ TelegramGameProxy: ${e.message}`);
-                    }
-                }, 100);
-                
-            } catch (error) {
-                log(`❌ Erro: ${error.message}`);
+            switch(state.screen) {
+                case 'menu':
+                    app.innerHTML = renderMenu();
+                    break;
+                case 'rooms':
+                    app.innerHTML = renderRooms();
+                    break;
+                case 'waiting':
+                    app.innerHTML = renderWaiting();
+                    break;
+                case 'profile':
+                    app.innerHTML = renderProfile();
+                    break;
+                default:
+                    app.innerHTML = renderMenu();
             }
         }
         
-        // Event listeners
+        function renderMenu() {
+            return `
+                <div class="header">
+                    <div class="logo">🎮</div>
+                    <h1 class="title">4 EM LINHA</h1>
+                    <p class="subtitle">Conecte 4 peças e ganhe!</p>
+                </div>
+                
+                <div class="card balance-display">
+                    <div class="balance-label">SEU SALDO DISPONÍVEL</div>
+                    <div class="balance-amount">R$ ${state.balance.toFixed(2)}</div>
+                    <button class="btn btn-secondary" onclick="updateBalance()">
+                        🔄 Atualizar Saldo
+                    </button>
+                </div>
+                
+                <button class="btn btn-primary" onclick="showRooms()">
+                    🎮 JOGAR AGORA
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showProfile()">
+                    📊 Meu Perfil
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showRanking()">
+                    🏆 Ranking
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showDeposit()">
+                    💳 Depositar
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showWithdraw()">
+                    💸 Sacar
+                </button>
+                
+                ${renderUserInfo()}
+            `;
+        }
+        
+        function renderRooms() {
+            return `
+                <button class="back-btn" onclick="goToMenu()">
+                    ← Voltar ao Menu
+                </button>
+                
+                <div class="card">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary);">
+                        🎯 ESCOLHA UMA SALA
+                    </h3>
+                    
+                    <div class="rooms-grid">
+                        ${state.rooms.map(room => `
+                            <div class="room-card" onclick="joinRoom('${room.id}')" 
+                                 style="border-color: ${room.color};">
+                                <div class="room-name">
+                                    <span style="font-size: 24px;">${room.icon}</span>
+                                    ${room.name}
+                                </div>
+                                <div class="room-info">
+                                    <span>💵 Aposta: R$ ${room.bet.toFixed(2)}</span>
+                                    <span>🏆 Prêmio: R$ ${(room.bet * 1.8).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px; color: var(--gray); font-size: 14px;">
+                        💡 Dica: Comece pela sala gratuita para aprender!
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderWaiting() {
+            return `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <h2 style="margin-bottom: 10px; color: var(--primary);">
+                        🔍 Buscando Oponente...
+                    </h2>
+                    <p style="color: var(--gray); margin-bottom: 30px;">
+                        Aguarde enquanto encontramos um adversário para você.<br>
+                        Isso pode levar alguns segundos.
+                    </p>
+                    
+                    <div class="status-message">
+                        <div style="font-size: 14px; color: var(--secondary); margin-bottom: 5px;">
+                            ⏱️ Tempo estimado: 10-30 segundos
+                        </div>
+                        <div style="font-size: 12px; color: var(--gray);">
+                            Se demorar muito, tente outra sala ou horário
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="cancelSearch()" 
+                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+                        ❌ Cancelar Busca
+                    </button>
+                </div>
+            `;
+        }
+        
+        function renderProfile() {
+            return `
+                <button class="back-btn" onclick="goToMenu()">
+                    ← Voltar
+                </button>
+                
+                <div class="card">
+                    <h3 style="text-align: center; margin-bottom: 20px; color: var(--primary);">
+                        👤 MEU PERFIL
+                    </h3>
+                    
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 60px; margin-bottom: 10px;">👤</div>
+                        <h4 style="font-size: 24px; margin-bottom: 5px;">${state.user?.first_name || 'Jogador'}</h4>
+                        <div style="color: var(--gray); font-size: 12px;">ID: ${state.user?.id || 'N/A'}</div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="color: var(--gray);">💰 Saldo</span>
+                            <span style="color: var(--secondary); font-weight: bold;">R$ ${state.balance.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span style="color: var(--gray);">⭐ XP</span>
+                            <span style="color: var(--warning); font-weight: bold;">0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--gray);">🎮 Partidas</span>
+                            <span style="color: var(--primary); font-weight: bold;">0</span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; color: var(--gray); font-size: 14px;">
+                        Jogue mais partidas para aumentar suas estatísticas!
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderUserInfo() {
+            if (!state.user) return '';
+            
+            return `
+                <div class="user-info">
+                    <div>👤 ${state.user.first_name} | 🆔 ${state.user.id}</div>
+                    <div style="font-size: 10px; margin-top: 5px; color: #475569;">
+                        Interface gráfica v1.0 • Conectado via Telegram
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ============ NAVEGAÇÃO ============
+        function showRooms() {
+            state.screen = 'rooms';
+            render();
+        }
+        
+        function goToMenu() {
+            state.screen = 'menu';
+            render();
+        }
+        
+        function showProfile() {
+            state.screen = 'profile';
+            render();
+        }
+        
+        function joinRoom(roomId) {
+            console.log('Entrando na sala:', roomId);
+            
+            // Muda para tela de espera
+            state.screen = 'waiting';
+            state.isSearching = true;
+            render();
+            
+            // Envia para o bot
+            sendToBot('join_room', { room_id: roomId });
+            
+            // Timeout após 30 segundos
+            setTimeout(() => {
+                if (state.isSearching) {
+                    state.isSearching = false;
+                    state.screen = 'menu';
+                    render();
+                    showModal(
+                        '⏰ Tempo Esgotado',
+                        'Não encontramos oponentes no momento.<br>Tente novamente ou escolha outra sala.',
+                        'info'
+                    );
+                }
+            }, 30000);
+        }
+        
+        function cancelSearch() {
+            if (state.isSearching) {
+                sendToBot('cancel_search', {});
+                state.isSearching = false;
+                state.screen = 'menu';
+                render();
+                tg.showAlert('Busca cancelada!');
+            }
+        }
+        
+        function updateBalance() {
+            sendToBot('balance', {});
+            tg.showAlert('Solicitando atualização de saldo...');
+        }
+        
+        function showRanking() {
+            sendToBot('ranking', {});
+            tg.showAlert('Carregando ranking...');
+        }
+        
+        function showDeposit() {
+            sendToBot('deposit', {});
+            tg.showAlert('Abrindo depósito...');
+        }
+        
+        function showWithdraw() {
+            sendToBot('withdraw', {});
+            tg.showAlert('Abrindo saque...');
+        }
+        
+        // ============ COMUNICAÇÃO COM BOT ============
+        function sendToBot(action, data = {}) {
+            console.log('Enviando para bot:', action, data);
+            
+            // Método 1: sendData padrão (pode não funcionar em alguns dispositivos)
+            try {
+                const payload = {
+                    action: action,
+                    user_id: state.user?.id,
+                    username: state.user?.first_name || 'Jogador',
+                    timestamp: Date.now(),
+                    ...data
+                };
+                
+                console.log('Payload:', payload);
+                tg.sendData(JSON.stringify(payload));
+                console.log('✅ sendData executado');
+                
+            } catch (error) {
+                console.error('❌ Erro no sendData:', error);
+                
+                // Método 2: Alternativo - Envia como callback query
+                setTimeout(() => {
+                    try {
+                        if (window.TelegramGameProxy) {
+                            window.TelegramGameProxy.receiveEvent('webapp_data', JSON.stringify({
+                                action: action,
+                                ...data
+                            }));
+                            console.log('✅ TelegramGameProxy usado');
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro no GameProxy:', e);
+                    }
+                }, 100);
+            }
+            
+            // Feedback visual
+            tg.showAlert(`Ação enviada: ${action}`);
+        }
+        
+        // ============ MODAL ============
+        function showModal(title, message, type = 'info') {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const icon = type === 'info' ? 'ℹ️' : type === 'success' ? '✅' : '❌';
+            const color = type === 'info' ? 'var(--primary)' : type === 'success' ? 'var(--secondary)' : 'var(--danger)';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">${icon}</div>
+                        <h3 style="color: ${color}; margin-bottom: 10px;">${title}</h3>
+                        <p style="color: var(--gray);">${message}</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="this.closest('.modal').remove()">
+                        OK
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // ============ EVENTOS ============
         tg.onEvent('themeChanged', () => {
-            log("🎨 Tema alterado");
+            console.log('Tema alterado');
         });
         
         tg.onEvent('viewportChanged', (e) => {
-            log(`📱 Viewport: ${JSON.stringify(e)}`);
+            console.log('Viewport alterado:', e);
         });
         
-        // Teste automático após 2 segundos
+        // Mensagem de boas-vindas
+        tg.showAlert('🎮 Bem-vindo ao 4 em Linha!');
+        
+        // ============ INICIALIZAÇÃO ============
+        render();
+        
+        // Teste automático após 1 segundo
         setTimeout(() => {
-            log("⏰ Teste automático iniciando...");
-            testSend('autotest', {test: true});
-        }, 2000);
-        
-        // Mostra todos os métodos disponíveis
-        log("=== MÉTODOS DISPONÍVEIS ===");
-        log(`tg.sendData: ${typeof tg.sendData}`);
-        log(`tg.showAlert: ${typeof tg.showAlert}`);
-        log(`tg.platform: ${tg.platform}`);
-        
-        // Verifica GameProxy
-        if (window.TelegramGameProxy) {
-            log("✅ TelegramGameProxy disponível");
-            log(`Métodos: ${Object.keys(window.TelegramGameProxy)}`);
-        } else {
-            log("❌ TelegramGameProxy NÃO disponível");
-        }
+            console.log('✅ Interface gráfica carregada com sucesso!');
+        }, 1000);
     </script>
 </body>
 </html>
