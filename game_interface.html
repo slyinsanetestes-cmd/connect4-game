@@ -608,9 +608,36 @@
 
         // ============ API CALLS ============
         async function sendToBot(action, data = {}) {
-            // Envia dados para o bot via Telegram WebApp
-            tg.sendData(JSON.stringify({ action, ...data }));
-        }
+			// Envia dados para o bot via Telegram WebApp
+			console.log("Enviando para bot:", action, data);
+			
+			// Método 1: Envia dados para o bot (aparece como mensagem)
+			const sendData = {
+				action: action, 
+				user_id: state.user?.id,
+				...data 
+			};
+			
+			console.log("Dados sendo enviados:", sendData);
+			
+			tg.sendData(JSON.stringify(sendData));
+			
+			// Mostra feedback para o usuário
+			if (action === 'join_room') {
+				tg.showAlert(`Buscando oponente na sala ${data.room_id}...`);
+			} else if (action === 'cancel_search') {
+				tg.showAlert("Cancelando busca...");
+			}
+		}
+
+		// E também adicione esta função para receber respostas do bot:
+		tg.onEvent('viewportChanged', function(eventData) {
+			console.log('Viewport changed:', eventData);
+		});
+
+		tg.onEvent('themeChanged', function() {
+			console.log('Theme changed');
+		});
 
         function receiveFromBot(data) {
             // Recebe dados do bot
