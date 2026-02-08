@@ -2,347 +2,148 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4 em Linha</title>
+    <title>Teste Web App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: #0f172a; 
-            color: white; 
-            font-family: Arial, sans-serif;
+            background: #000; 
+            color: #0f0; 
+            font-family: monospace; 
             padding: 20px;
-            min-height: 100vh;
         }
-        .container { 
-            max-width: 500px; 
-            margin: 0 auto;
-            padding-bottom: 20px;
-        }
-        .header { text-align: center; margin-bottom: 30px; }
-        .title { 
-            font-size: 32px; 
-            background: linear-gradient(45deg, #3b82f6, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 15px 0;
-        }
-        .card {
-            background: #1e293b;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #334155;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
+        button { 
+            background: #0f0; 
+            color: #000; 
+            border: none; 
+            padding: 15px; 
+            margin: 10px; 
+            font-size: 16px; 
             cursor: pointer;
-            transition: all 0.3s;
         }
-        .btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #3b82f6, #10b981);
-            font-size: 18px;
-        }
-        .room {
-            padding: 15px;
-            background: #334155;
-            border-radius: 10px;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .room:hover { 
-            background: #475569;
-            transform: translateX(5px);
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #334155;
-            border-top: 5px solid #3b82f6;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .debug {
-            background: #000;
-            color: #0f0;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 100px;
-            overflow-y: auto;
+        .log { 
+            background: #111; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border: 1px solid #0f0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="app">
-            <!-- Conteúdo carregado aqui -->
-        </div>
+    <h1>🧪 TESTE WEB APP</h1>
+    
+    <div id="status">Carregando...</div>
+    
+    <div>
+        <button onclick="testSend('join_room', {room_id: 'free'})">
+            🎮 ENVIAR join_room
+        </button>
         
-        <div class="debug" id="debug">
-            <!-- Logs de debug -->
-        </div>
+        <button onclick="testSend('profile', {})">
+            📊 ENVIAR profile
+        </button>
+        
+        <button onclick="testSend('test', {hello: 'world'})">
+            🧪 ENVIAR teste
+        </button>
+    </div>
+    
+    <div class="log" id="log">
+        <!-- Logs aparecerão aqui -->
     </div>
 
     <script>
-        // ============ INICIALIZAÇÃO ============
+        // Telegram Web App
         const tg = window.Telegram.WebApp;
         
-        // Expandir e inicializar
+        // Expande e inicializa
         tg.expand();
         tg.ready();
         
-        console.log("=== WEB APP INICIADO ===");
-        console.log("Plataforma:", tg.platform);
-        console.log("Versão:", tg.version);
-        console.log("User:", tg.initDataUnsafe?.user);
+        // Elementos DOM
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
         
-        // Função para logs visuais
-        function logDebug(msg) {
+        // Função de log
+        function log(msg) {
             console.log(msg);
-            const debugDiv = document.getElementById('debug');
-            if (debugDiv) {
-                debugDiv.innerHTML += msg + '<br>';
-                debugDiv.scrollTop = debugDiv.scrollHeight;
-            }
+            logEl.innerHTML += msg + '<br>';
+            logEl.scrollTop = logEl.scrollHeight;
         }
         
-        logDebug("✅ Web App carregado");
-        logDebug(`👤 Usuário: ${tg.initDataUnsafe?.user?.first_name || 'Anônimo'}`);
+        // Inicialização
+        log("=== WEB APP INICIADO ===");
+        log(`Plataforma: ${tg.platform}`);
+        log(`Versão: ${tg.version}`);
+        log(`User ID: ${tg.initDataUnsafe?.user?.id || 'N/A'}`);
+        log(`User: ${tg.initDataUnsafe?.user?.first_name || 'N/A'}`);
         
-        // ============ ESTADO ============
-        const state = {
-            screen: 'menu',
-            user: tg.initDataUnsafe?.user || null,
-            rooms: [
-                {id: 'free', name: '🆓 GRATUITA', bet: 0, color: '#94a3b8'},
-                {id: '1', name: '💰 R$ 1,00', bet: 1, color: '#10b981'},
-                {id: '2', name: '💵 R$ 2,00', bet: 2, color: '#fbbf24'},
-                {id: '5', name: '💸 R$ 5,00', bet: 5, color: '#f97316'},
-                {id: '10', name: '💎 R$ 10,00', bet: 10, color: '#8b5cf6'}
-            ],
-            searching: false
-        };
+        statusEl.innerHTML = `👤 ${tg.initDataUnsafe?.user?.first_name || 'Usuário'} | ID: ${tg.initDataUnsafe?.user?.id || 'N/A'}`;
         
-        // ============ RENDERIZAÇÃO ============
-        function render() {
-            const app = document.getElementById('app');
-            
-            if (state.screen === 'menu') {
-                app.innerHTML = `
-                    <div class="header">
-                        <div style="font-size: 48px; margin-bottom: 10px;">🎮</div>
-                        <h1 class="title">4 EM LINHA</h1>
-                        <p>Conecte 4 peças e ganhe!</p>
-                    </div>
-                    
-                    <div class="card">
-                        <p style="text-align: center; color: #94a3b8;">Seu Saldo</p>
-                        <h2 style="text-align: center; color: #10b981; margin: 10px 0;">R$ 100.00</h2>
-                        <button class="btn" onclick="sendAction('balance')">
-                            🔄 Atualizar Saldo
-                        </button>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="showRooms()">
-                        🎮 JOGAR AGORA
-                    </button>
-                    
-                    <button class="btn" onclick="sendAction('profile')">
-                        📊 Meu Perfil
-                    </button>
-                    
-                    <button class="btn" onclick="sendAction('ranking')">
-                        🏆 Ranking
-                    </button>
-                    
-                    <button class="btn" onclick="sendAction('deposit')">
-                        💳 Depositar
-                    </button>
-                    
-                    <button class="btn" onclick="sendAction('withdraw')">
-                        💸 Sacar
-                    </button>
-                    
-                    ${state.user ? `
-                        <div style="text-align: center; margin-top: 20px; color: #94a3b8; padding: 10px; background: #1e293b; border-radius: 10px;">
-                            👤 <strong>${state.user.first_name}</strong><br>
-                            🆔 ID: ${state.user.id}
-                        </div>
-                    ` : ''}
-                `;
-            }
-            else if (state.screen === 'rooms') {
-                app.innerHTML = `
-                    <button class="btn" onclick="goToMenu()" style="margin-bottom: 20px;">
-                        ← Voltar ao Menu
-                    </button>
-                    
-                    <div class="card">
-                        <h3 style="text-align: center; margin-bottom: 20px;">🎯 Escolha uma Sala</h3>
-                        
-                        ${state.rooms.map(room => `
-                            <div class="room" onclick="joinRoom('${room.id}')" 
-                                 style="border-left: 5px solid ${room.color};">
-                                <div style="font-size: 18px; font-weight: bold;">${room.name}</div>
-                                <div style="color: #94a3b8; margin-top: 5px; font-size: 14px;">
-                                    💵 Aposta: R$ ${room.bet.toFixed(2)}<br>
-                                    🏆 Prêmio: R$ ${(room.bet * 1.8).toFixed(2)}
-                                </div>
-                            </div>
-                        `).join('')}
-                        
-                        <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 14px;">
-                            💡 Dica: Comece pela sala gratuita!
-                        </div>
-                    </div>
-                `;
-            }
-            else if (state.screen === 'waiting') {
-                app.innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <h3>🔍 Buscando Oponente...</h3>
-                        <p style="color: #94a3b8; margin: 10px 0;">
-                            Aguarde enquanto encontramos alguém para jogar com você.
-                            Isso pode levar alguns segundos.
-                        </p>
-                        
-                        <div style="background: #1e293b; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                            <div style="color: #fbbf24;">⏰ Tempo estimado: 10-30 segundos</div>
-                            <div style="color: #94a3b8; font-size: 12px; margin-top: 5px;">
-                                Se demorar muito, tente outra sala
-                            </div>
-                        </div>
-                        
-                        <button class="btn" onclick="cancelSearch()" 
-                                style="background: linear-gradient(45deg, #ef4444, #dc2626);">
-                            ❌ Cancelar Busca
-                        </button>
-                    </div>
-                `;
-            }
-        }
-        
-        // ============ FUNÇÕES ============
-        function showRooms() {
-            logDebug("Mostrando salas...");
-            state.screen = 'rooms';
-            render();
-        }
-        
-        function goToMenu() {
-            logDebug("Voltando ao menu...");
-            state.screen = 'menu';
-            render();
-        }
-        
-        function joinRoom(roomId) {
-            logDebug(`Tentando entrar na sala: ${roomId}`);
-            
-            // Envia para o bot
-            sendAction('join_room', { room_id: roomId });
-            
-            // Muda para tela de espera
-            state.screen = 'waiting';
-            state.searching = true;
-            render();
-            
-            // Timeout após 30 segundos
-            setTimeout(() => {
-                if (state.searching) {
-                    logDebug("⏰ Timeout - Nenhum oponente encontrado");
-                    state.searching = false;
-                    state.screen = 'menu';
-                    render();
-                    tg.showAlert("⏰ Não encontramos oponentes. Tente novamente!");
-                }
-            }, 30000);
-        }
-        
-        function cancelSearch() {
-            logDebug("Cancelando busca...");
-            sendAction('cancel_search');
-            state.searching = false;
-            state.screen = 'menu';
-            render();
-            tg.showAlert("✅ Busca cancelada!");
-        }
-        
-        // ============ COMUNICAÇÃO COM BOT ============
-        function sendAction(action, data = {}) {
-            const message = {
+        // Função para enviar dados
+        function testSend(action, data) {
+            const payload = {
                 action: action,
-                user_id: state.user?.id,
-                username: state.user?.first_name || "Jogador",
+                user_id: tg.initDataUnsafe?.user?.id,
+                username: tg.initDataUnsafe?.user?.first_name || "Teste",
                 timestamp: Date.now(),
                 ...data
             };
             
-            logDebug(`📤 Enviando: ${action} ${JSON.stringify(data)}`);
+            log(`📤 Enviando: ${JSON.stringify(payload)}`);
             
             try {
-                // DEBUG: Mostra o que está sendo enviado
-                console.log("Mensagem para o bot:", message);
+                // Método 1: sendData padrão
+                tg.sendData(JSON.stringify(payload));
+                log("✅ sendData() chamado");
                 
-                // Envia para o bot
-                tg.sendData(JSON.stringify(message));
-                logDebug("✅ Dados enviados com sucesso!");
-                
-                // Feedback visual
+                // Método 2: Feedback
                 tg.showAlert(`Enviado: ${action}`);
                 
+                // Método 3: Tentar enviar como callback
+                setTimeout(() => {
+                    try {
+                        if (window.TelegramGameProxy && window.TelegramGameProxy.receiveEvent) {
+                            window.TelegramGameProxy.receiveEvent("custom", JSON.stringify(payload));
+                            log("✅ TelegramGameProxy usado");
+                        }
+                    } catch (e) {
+                        log(`❌ TelegramGameProxy: ${e.message}`);
+                    }
+                }, 100);
+                
             } catch (error) {
-                logDebug(`❌ Erro ao enviar: ${error}`);
-                tg.showAlert("❌ Erro ao enviar dados. Tente novamente.");
+                log(`❌ Erro: ${error.message}`);
             }
         }
         
-        // ============ EVENTOS ============
+        // Event listeners
         tg.onEvent('themeChanged', () => {
-            logDebug("🎨 Tema alterado");
+            log("🎨 Tema alterado");
         });
         
         tg.onEvent('viewportChanged', (e) => {
-            logDebug(`📱 Viewport: ${e.width}x${e.height}`);
+            log(`📱 Viewport: ${JSON.stringify(e)}`);
         });
         
-        // ============ INICIALIZAÇÃO ============
-        logDebug("🎬 Inicializando interface...");
-        render();
-        
-        // Mostra mensagem de boas-vindas
+        // Teste automático após 2 segundos
         setTimeout(() => {
-            tg.showAlert("🎮 Bem-vindo ao 4 em Linha!\nClique em JOGAR AGORA para começar!");
-        }, 500);
+            log("⏰ Teste automático iniciando...");
+            testSend('autotest', {test: true});
+        }, 2000);
         
-        // Log adicional
-        logDebug("✅ Interface carregada com sucesso!");
+        // Mostra todos os métodos disponíveis
+        log("=== MÉTODOS DISPONÍVEIS ===");
+        log(`tg.sendData: ${typeof tg.sendData}`);
+        log(`tg.showAlert: ${typeof tg.showAlert}`);
+        log(`tg.platform: ${tg.platform}`);
+        
+        // Verifica GameProxy
+        if (window.TelegramGameProxy) {
+            log("✅ TelegramGameProxy disponível");
+            log(`Métodos: ${Object.keys(window.TelegramGameProxy)}`);
+        } else {
+            log("❌ TelegramGameProxy NÃO disponível");
+        }
     </script>
 </body>
 </html>
